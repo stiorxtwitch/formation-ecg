@@ -18,7 +18,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         label {
@@ -33,6 +33,13 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+        }
+        #personal-info {
+            display: flex;
+            gap: 20px;
+        }
+        #personal-info div {
+            flex: 1;
         }
         #container {
             display: flex;
@@ -53,10 +60,10 @@
             text-align: center;
             cursor: grab;
             border-radius: 50%;
-            width: 32px;          /* ← plus petit pour plus de précision */
-            height: 32px;
-            line-height: 32px;
-            font-size: 11px;
+            width: 24px;          /* ← encore plus petit pour plus de précision */
+            height: 24px;
+            line-height: 24px;
+            font-size: 10px;
             font-weight: bold;
             user-select: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -67,11 +74,13 @@
             border-radius: 6px;
             overflow: hidden;
             flex: 1;
+            max-width: 1000px;    /* ← Augmente la largeur max pour plus de précision */
         }
         #mannequin {
             width: 100%;
             height: auto;
             display: block;
+            image-rendering: pixelated; /* ← Pour une meilleure netteté si besoin, mais optionnel */
         }
         button {
             background: #28a745;
@@ -93,6 +102,18 @@
     <h1>Formation à l'ECG (Électrocardiogramme) - La Défense Belge</h1>
 
     <form id="ecgForm">
+        <h2>Informations personnelles</h2>
+        <div id="personal-info">
+            <div>
+                <label>Nom</label>
+                <input type="text" name="nom" required>
+            </div>
+            <div>
+                <label>Prénom</label>
+                <input type="text" name="prenom" required>
+            </div>
+        </div>
+
         <h2>Questions théoriques sur les ondes ECG</h2>
         
         <label>1. Que représente l'onde P ?</label>
@@ -111,7 +132,7 @@
         <input type="text" name="q5" required>
 
         <h2>Simulation de placement des électrodes ECG</h2>
-        <p>Glissez-déposez les électrodes aux emplacements corrects. Les pastilles sont plus petites pour un placement précis.</p>
+        <p>Glissez-déposez les électrodes aux emplacements corrects. Les pastilles sont plus petites pour un placement précis, et l'image est agrandie pour plus de précision.</p>
 
         <div id="container">
             <div id="electrodes">
@@ -181,13 +202,18 @@
                 formData[input.name] = input.value.trim();
             });
 
-            // Récupérer positions des électrodes
+            // Récupérer positions des électrodes (relatives à la taille actuelle)
             formData.placements = {};
+            const containerWidth = document.getElementById('mannequin-container').offsetWidth;
+            const containerHeight = document.getElementById('mannequin-container').offsetHeight;
             for (let el of electrodes) {
                 if (el.style.position === 'absolute') {
                     const left = parseFloat(el.style.left) || 0;
-                    const top  = parseFloat(el.style.top)  || 0;
-                    formData.placements[el.id] = { left, top };
+                    const top = parseFloat(el.style.top) || 0;
+                    formData.placements[el.id] = {
+                        leftPercent: (left / containerWidth) * 100,
+                        topPercent: (top / containerHeight) * 100
+                    };
                 }
             }
 
