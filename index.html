@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Formation à l'ECG - La Défense Belge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #container {
+            display: flex;
+            margin-top: 20px;
+        }
+        #electrodes {
+            width: 150px;
+            margin-right: 20px;
+            background: #eee;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .electrode {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            cursor: grab;
+            border-radius: 4px;
+            user-select: none;
+        }
+        #mannequin-container {
+            position: relative;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        #mannequin {
+            width: 500px;
+            height: auto;
+            display: block;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formation à l'ECG (Électrocardiogramme) - La Défense Belge</h1>
+    <form id="ecgForm">
+        <h2>Questions théoriques sur les ondes ECG</h2>
+        <label>1. Que représente l'onde P ? (Ex: Dépolarisation auriculaire)</label>
+        <input type="text" name="q1">
+
+        <label>2. Que représente le complexe QRS ?</label>
+        <input type="text" name="q2">
+
+        <label>3. Que représente l'onde T ?</label>
+        <input type="text" name="q3">
+
+        <label>4. Quelle est la signification de l'intervalle PR ?</label>
+        <input type="text" name="q4">
+
+        <label>5. Qu'est-ce que le segment ST et pourquoi est-il important ?</label>
+        <input type="text" name="q5">
+
+        <h2>Simulation de placement des électrodes précordiales (V)</h2>
+        <p>Glissez et déposez les patchs V1 à V6 aux positions correctes sur le torse du mannequin. Référez-vous aux positions standard : V1 au 4e espace intercostal droit du sternum, V2 au 4e gauche, V3 entre V2 et V4, V4 au 5e espace intercostal ligne médio-claviculaire, V5 ligne axillaire antérieure, V6 ligne axillaire moyenne.</p>
+
+        <div id="container">
+            <div id="electrodes">
+                <div class="electrode" id="v1" draggable="true">V1</div>
+                <div class="electrode" id="v2" draggable="true">V2</div>
+                <div class="electrode" id="v3" draggable="true">V3</div>
+                <div class="electrode" id="v4" draggable="true">V4</div>
+                <div class="electrode" id="v5" draggable="true">V5</div>
+                <div class="electrode" id="v6" draggable="true">V6</div>
+            </div>
+            <div id="mannequin-container" ondrop="drop(event)" ondragover="allowDrop(event)">
+                <img src="https://i.imgur.com/xIj4UxP.png" id="mannequin" alt="Mannequin torse">
+            </div>
+        </div>
+
+        <button type="submit">Soumettre le formulaire</button>
+    </form>
+
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            var electrode = document.getElementById(data);
+            
+            // Calculer la position relative au container
+            var rect = ev.target.getBoundingClientRect();
+            var x = ev.clientX - rect.left - (electrode.offsetWidth / 2);
+            var y = ev.clientY - rect.top - (electrode.offsetHeight / 2);
+            
+            electrode.style.position = 'absolute';
+            electrode.style.left = x + 'px';
+            electrode.style.top = y + 'px';
+            
+            document.getElementById('mannequin-container').appendChild(electrode);
+        }
+
+        var electrodes = document.getElementsByClassName('electrode');
+        for (var i = 0; i < electrodes.length; i++) {
+            electrodes[i].ondragstart = drag;
+        }
+    </script>
+</body>
+</html>
