@@ -24,22 +24,37 @@
             margin-top: 0;
             color: #007bff;
         }
-        .theory, .placements {
+        .info, .theory, .placements {
             margin: 12px 0;
         }
-        .theory p {
+        .info p, .theory p {
             margin: 6px 0;
         }
-        .placements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 8px;
+        .placement-visual {
+            position: relative;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            overflow: hidden;
+            max-width: 800px;
+            margin-top: 10px;
         }
-        .placement-item {
-            background: #e9ecef;
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 0.9em;
+        .placement-visual img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .electrode-clone {
+            position: absolute;
+            background: #2c7be5;
+            color: white;
+            text-align: center;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            font-size: 10px;
+            font-weight: bold;
+            user-select: none;
         }
         button {
             background: #dc3545;
@@ -80,6 +95,11 @@
 
                 let html = `<h3>Soumission #${index + 1} — ${new Date(sub.timestamp).toLocaleString('fr-BE')}</h3>`;
 
+                html += '<div class="info"><strong>Informations personnelles :</strong>';
+                html += `<p><strong>Nom :</strong> ${sub.data.nom || '(non fourni)'}</p>`;
+                html += `<p><strong>Prénom :</strong> ${sub.data.prenom || '(non fourni)'}</p>`;
+                html += '</div>';
+
                 html += '<div class="theory"><strong>Réponses théoriques :</strong>';
                 for (let [key, value] of Object.entries(sub.data)) {
                     if (key.startsWith('q')) {
@@ -89,15 +109,32 @@
                 html += '</div>';
 
                 html += '<div class="placements"><strong>Placements des électrodes :</strong>';
-                html += '<div class="placements-grid">';
-                if (Object.keys(sub.data.placements || {}).length === 0) {
-                    html += '<p>Aucun placement enregistré</p>';
-                } else {
-                    for (let [id, pos] of Object.entries(sub.data.placements)) {
-                        html += `<div class="placement-item"><strong>${id}</strong><br>x: ${Math.round(pos.left)} px<br>y: ${Math.round(pos.top)} px</div>`;
+
+                // Créer le conteneur visuel
+                const visualContainer = document.createElement('div');
+                visualContainer.className = 'placement-visual';
+                const img = document.createElement('img');
+                img.src = 'https://i.imgur.com/n6aXhGW.jpeg';
+                img.alt = 'Mannequin ECG';
+                visualContainer.appendChild(img);
+
+                // Ajouter les clones d'électrodes aux positions relatives
+                img.onload = () => {
+                    const width = img.offsetWidth;
+                    const height = img.offsetHeight;
+                    for (let [id, pos] of Object.entries(sub.data.placements || {})) {
+                        const clone = document.createElement('div');
+                        clone.className = 'electrode-clone';
+                        clone.textContent = id.toUpperCase();
+                        clone.style.left = (pos.leftPercent / 100 * width) + 'px';
+                        clone.style.top = (pos.topPercent / 100 * height) + 'px';
+                        visualContainer.appendChild(clone);
                     }
-                }
-                html += '</div></div>';
+                };
+
+                div.appendChild(visualContainer);
+
+                html += '</div>';
 
                 div.innerHTML = html;
                 container.appendChild(div);
