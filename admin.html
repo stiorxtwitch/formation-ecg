@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Soumissions ECG Formation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            padding: 20px;
+        }
+        h1 {
+            color: #dc3545;
+        }
+        .submission {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .submission h3 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        .theory, .placements {
+            margin: 12px 0;
+        }
+        .theory p {
+            margin: 6px 0;
+        }
+        .placements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+        }
+        .placement-item {
+            background: #e9ecef;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Administration - Soumissions des recrues</h1>
+    <p>Ces données sont stockées localement (localStorage) pour cet exercice.</p>
+    <button onclick="clearSubmissions()">Effacer toutes les soumissions</button>
+
+    <div id="submissionsList"></div>
+
+    <script>
+        function renderSubmissions() {
+            const submissions = JSON.parse(localStorage.getItem('ecgSubmissions') || '[]');
+            const container = document.getElementById('submissionsList');
+            container.innerHTML = '';
+
+            if (submissions.length === 0) {
+                container.innerHTML = '<p>Aucune soumission pour le moment.</p>';
+                return;
+            }
+
+            submissions.forEach((sub, index) => {
+                const div = document.createElement('div');
+                div.className = 'submission';
+
+                let html = `<h3>Soumission #${index + 1} — ${new Date(sub.timestamp).toLocaleString('fr-BE')}</h3>`;
+
+                html += '<div class="theory"><strong>Réponses théoriques :</strong>';
+                for (let [key, value] of Object.entries(sub.data)) {
+                    if (key.startsWith('q')) {
+                        html += `<p><strong>${key.toUpperCase()} :</strong> ${value || '(non répondu)'}</p>`;
+                    }
+                }
+                html += '</div>';
+
+                html += '<div class="placements"><strong>Placements des électrodes :</strong>';
+                html += '<div class="placements-grid">';
+                if (Object.keys(sub.data.placements || {}).length === 0) {
+                    html += '<p>Aucun placement enregistré</p>';
+                } else {
+                    for (let [id, pos] of Object.entries(sub.data.placements)) {
+                        html += `<div class="placement-item"><strong>${id}</strong><br>x: ${Math.round(pos.left)} px<br>y: ${Math.round(pos.top)} px</div>`;
+                    }
+                }
+                html += '</div></div>';
+
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+
+        function clearSubmissions() {
+            if (confirm('Voulez-vous vraiment effacer toutes les soumissions ?')) {
+                localStorage.removeItem('ecgSubmissions');
+                renderSubmissions();
+            }
+        }
+
+        // Charger au démarrage
+        renderSubmissions();
+    </script>
+
+</body>
+</html>
