@@ -45,7 +45,6 @@
         }
         .electrode-clone {
             position: absolute;
-            background: #2c7be5;
             color: white;
             text-align: center;
             border-radius: 50%;
@@ -55,6 +54,7 @@
             font-size: 10px;
             font-weight: bold;
             user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         button {
             background: #dc3545;
@@ -79,6 +79,28 @@
     <div id="submissionsList"></div>
 
     <script>
+        const colorMap = {
+            ra: 'red',
+            la: 'yellow',
+            rl: 'black',
+            ll: 'green',
+            v1: 'red',
+            v2: 'yellow',
+            v3: 'green',
+            v4: 'brown',
+            v5: 'black',
+            v6: 'purple',
+            v7: 'orange',
+            v8: 'white',
+            v9: 'grey'
+        };
+
+        const textColorMap = {
+            la: 'black',
+            v2: 'black',
+            v8: 'black'
+        };
+
         function renderSubmissions() {
             const submissions = JSON.parse(localStorage.getItem('ecgSubmissions') || '[]');
             const container = document.getElementById('submissionsList');
@@ -108,9 +130,8 @@
                 }
                 html += '</div>';
 
-                html += '<div class="placements"><strong>Placements des électrodes :</strong>';
+                html += '<div class="placements"><strong>Placements des électrodes :</strong></div>';
 
-                // Créer le conteneur visuel
                 const visualContainer = document.createElement('div');
                 visualContainer.className = 'placement-visual';
                 const img = document.createElement('img');
@@ -118,7 +139,6 @@
                 img.alt = 'Mannequin ECG';
                 visualContainer.appendChild(img);
 
-                // Ajouter les clones d'électrodes aux positions relatives
                 img.onload = () => {
                     const width = img.offsetWidth;
                     const height = img.offsetHeight;
@@ -126,17 +146,16 @@
                         const clone = document.createElement('div');
                         clone.className = 'electrode-clone';
                         clone.textContent = id.toUpperCase();
+                        clone.style.backgroundColor = colorMap[id] || 'blue';
+                        clone.style.color = textColorMap[id] || 'white';
                         clone.style.left = (pos.leftPercent / 100 * width) + 'px';
                         clone.style.top = (pos.topPercent / 100 * height) + 'px';
                         visualContainer.appendChild(clone);
                     }
                 };
 
-                div.appendChild(visualContainer);
-
-                html += '</div>';
-
                 div.innerHTML = html;
+                div.appendChild(visualContainer);
                 container.appendChild(div);
             });
         }
@@ -148,7 +167,6 @@
             }
         }
 
-        // Charger au démarrage
         renderSubmissions();
     </script>
 
