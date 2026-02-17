@@ -8,7 +8,7 @@
             font-family: Arial, sans-serif;
             background: #f8f9fa;
             padding: 20px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
         h1 {
             color: #dc3545;
@@ -18,53 +18,66 @@
             border: 1px solid #dee2e6;
             border-radius: 8px;
             padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
         .submission h3 {
             margin-top: 0;
             color: #007bff;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
         }
         .section {
-            margin: 15px 0;
+            margin: 18px 0;
         }
         .section strong {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            color: #333;
         }
-        .ecg-visual {
+        .ecg-visual-container {
             position: relative;
             border: 1px solid #ccc;
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
-            max-width: 800px;
+            max-width: 900px;
             margin: 15px 0;
+            background: #fff;
         }
-        .ecg-visual img {
+        .ecg-visual-container img {
             width: 100%;
             height: auto;
             display: block;
+        }
+        .loading {
+            padding: 40px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
         }
         .electrode-clone {
             position: absolute;
             color: white;
             text-align: center;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            line-height: 24px;
-            font-size: 10px;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            font-size: 11px;
             font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            pointer-events: none;
+            z-index: 10;
         }
         button {
             background: #dc3545;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
+            margin-bottom: 20px;
         }
         button:hover {
             background: #c82333;
@@ -74,98 +87,132 @@
 <body>
 
     <h1>Administration - Soumissions des recrues</h1>
-    <p>Données stockées localement (localStorage). Effacez-les si nécessaire.</p>
+    <p>Données stockées localement via localStorage.</p>
     <button onclick="clearSubmissions()">Effacer toutes les soumissions</button>
 
     <div id="submissionsList"></div>
 
     <script>
         const colorMap = {
-            ra: 'red', la: 'yellow', rl: 'black', ll: 'green',
-            v1: 'red', v2: 'yellow', v3: 'green', v4: 'brown',
-            v5: 'black', v6: 'purple', v7: 'orange', v8: 'white',
+            ra: 'red',    la: 'yellow', rl: 'black',  ll: 'green',
+            v1: 'red',    v2: 'yellow', v3: 'green',  v4: 'brown',
+            v5: 'black',  v6: 'purple', v7: 'orange', v8: 'white',
             v9: 'grey'
         };
+
         const textColorMap = {
-            la: 'black', v2: 'black', v8: 'black'
+            la: 'black',
+            v2: 'black',
+            v8: 'black'
         };
+
+        function createVisualContainer(placements) {
+            const container = document.createElement('div');
+            container.className = 'ecg-visual-container';
+
+            const loading = document.createElement('div');
+            loading.className = 'loading';
+            loading.textContent = 'Chargement de l’image mannequin...';
+            container.appendChild(loading);
+
+            const img = new Image();
+            img.src = 'https://i.imgur.com/n6aXhGW.jpeg';
+            img.alt = 'Mannequin ECG avec placements';
+
+            img.onload = () => {
+                container.innerHTML = ''; // retire le loading
+                container.appendChild(img);
+
+                const w = img.offsetWidth;
+                const h = img.offsetHeight;
+
+                for (const [id, pos] of Object.entries(placements || {})) {
+                    if (typeof pos.leftPercent !== 'number' || typeof pos.topPercent !== 'number') continue;
+
+                    const clone = document.createElement('div');
+                    clone.className = 'electrode-clone';
+                    clone.textContent = id.toUpperCase();
+                    clone.style.backgroundColor = colorMap[id.toLowerCase()] || '#2c7be5';
+                    clone.style.color = textColorMap[id.toLowerCase()] || 'white';
+                    clone.style.left = `${(pos.leftPercent / 100) * w}px`;
+                    clone.style.top  = `${(pos.topPercent / 100) * h}px`;
+
+                    container.appendChild(clone);
+                }
+            };
+
+            img.onerror = () => {
+                loading.textContent = 'Erreur lors du chargement de l’image mannequin.';
+            };
+
+            return container;
+        }
 
         function renderSubmissions() {
             const submissions = JSON.parse(localStorage.getItem('ecgSubmissions') || '[]');
-            const container = document.getElementById('submissionsList');
-            container.innerHTML = submissions.length === 0 
-                ? '<p style="font-style:italic;">Aucune soumission enregistrée pour le moment.</p>'
-                : '';
+            const list = document.getElementById('submissionsList');
+            list.innerHTML = '';
 
-            submissions.forEach((sub, index) => {
+            if (submissions.length === 0) {
+                list.innerHTML = '<p style="font-style: italic; color: #555;">Aucune soumission pour le moment.</p>';
+                return;
+            }
+
+            submissions.forEach((sub, idx) => {
                 const div = document.createElement('div');
                 div.className = 'submission';
 
-                let html = `<h3>Soumission #${index + 1} — ${new Date(sub.timestamp).toLocaleString('fr-BE')}</h3>`;
+                let html = `<h3>Soumission #${idx + 1} — ${new Date(sub.timestamp).toLocaleString('fr-BE')}</h3>`;
 
-                html += '<div class="section"><strong>Informations personnelles :</strong>';
-                html += `<p>Nom : ${sub.data.nom || '(non fourni)'}</p>`;
-                html += `<p>Prénom : ${sub.data.prenom || '(non fourni)'}</p></div>`;
+                html += '<div class="section"><strong>Recrue :</strong>';
+                html += `<p>Nom : ${sub.data.nom || '(non indiqué)'}</p>`;
+                html += `<p>Prénom : ${sub.data.prenom || '(non indiqué)'}</p></div>`;
 
                 html += '<div class="section"><strong>Réponses théoriques :</strong>';
                 for (let i = 1; i <= 5; i++) {
-                    html += `<p>Q${i} : ${sub.data[`q${i}`] || '(non répondu)'}</p>`;
+                    html += `<p>Q${i} : ${sub.data[`q${i}`] || '—'}</p>`;
                 }
                 html += '</div>';
 
-                html += '<div class="section"><strong>Placements des électrodes :</strong>';
-                const visual = document.createElement('div');
-                visual.className = 'ecg-visual';
-                const img = document.createElement('img');
-                img.src = 'https://i.imgur.com/n6aXhGW.jpeg';
-                img.alt = 'Mannequin ECG';
-                visual.appendChild(img);
+                html += '<div class="section"><strong>Placement des électrodes :</strong></div>';
 
-                img.onload = () => {
-                    const w = img.offsetWidth;
-                    const h = img.offsetHeight;
-                    for (let [id, pos] of Object.entries(sub.data.placements || {})) {
-                        const clone = document.createElement('div');
-                        clone.className = 'electrode-clone';
-                        clone.textContent = id.toUpperCase();
-                        clone.style.backgroundColor = colorMap[id] || 'blue';
-                        clone.style.color = textColorMap[id] || 'white';
-                        clone.style.left = (pos.leftPercent / 100 * w) + 'px';
-                        clone.style.top  = (pos.topPercent / 100 * h) + 'px';
-                        visual.appendChild(clone);
-                    }
-                };
-                html += '</div>';
-
-                html += '<div class="section"><strong>Reconnaissance des tracés ECG :</strong>';
-                html += `<p><strong>ECG normal – Pourquoi normal ?</strong><br>${sub.data.normal_why || '(non répondu)'}</p>`;
-                html += `<p><strong>ST elevation – Signification :</strong><br>${sub.data.st_elevation_meaning || '(non répondu)'}</p>`;
-                html += `<p><strong>ST elevation – Pourquoi anormal ?</strong><br>${sub.data.st_elevation_why_abnormal || '(non répondu)'}</p>`;
-                html += `<p><strong>ST depression – Signification :</strong><br>${sub.data.st_depression_meaning || '(non répondu)'}</p>`;
-                html += `<p><strong>ST depression – Pourquoi anormal ?</strong><br>${sub.data.st_depression_why_abnormal || '(non répondu)'}</p>`;
-                html += `<p><strong>Inversion T – Causes possibles :</strong><br>${sub.data.t_inversion_meaning || '(non répondu)'}</p>`;
-                html += `<p><strong>Inversion T – Pourquoi anormal ?</strong><br>${sub.data.t_inversion_why_abnormal || '(non répondu)'}</p>`;
-                html += `<p><strong>Ondes T pointues – Signification :</strong><br>${sub.data.peaked_t_meaning || '(non répondu)'}</p>`;
-                html += `<p><strong>Ondes T pointues – Pourquoi anormal ?</strong><br>${sub.data.peaked_t_why_abnormal || '(non répondu)'}</p>`;
-                html += `<p><strong>Ondes T plates / U – Signification :</strong><br>${sub.data.u_wave_meaning || '(non répondu)'}</p>`;
-                html += `<p><strong>Ondes T plates / U – Pourquoi anormal ?</strong><br>${sub.data.u_wave_why_abnormal || '(non répondu)'}</p>`;
-                html += `<p><strong>Fibrillation auriculaire – Signification :</strong><br>${sub.data.afib_meaning || '(non répondu)'}</p>`;
-                html += `<p><strong>Fibrillation auriculaire – Pourquoi anormal ?</strong><br>${sub.data.afib_why_abnormal || '(non répondu)'}</p>`;
-                html += '</div>';
-
+                const visual = createVisualContainer(sub.data.placements);
                 div.innerHTML = html;
                 div.appendChild(visual);
-                container.appendChild(div);
+
+                // Ajout des réponses aux tracés ECG (si présentes)
+                let tracingsHtml = '<div class="section"><strong>Analyse des tracés ECG :</strong>';
+                for (let i = 1; i <= 7; i++) {
+                    const normal = sub.data[`tracing${i}_normal_or_not`] || '—';
+                    const anomalies = sub.data[`tracing${i}_anomalies`] || '—';
+                    const interp = sub.data[`tracing${i}_interpretation`] || '—';
+
+                    tracingsHtml += `
+                        <p><strong>Tracé ${i}</strong><br>
+                        Normal/Anormal : ${normal}<br>
+                        Anomalies observées :<br>${anomalies.replace(/\n/g, '<br>')}<br>
+                        Interprétation :<br>${interp.replace(/\n/g, '<br>')}</p>
+                        <hr style="border:0; border-top:1px solid #eee; margin:12px 0;">
+                    `;
+                }
+                tracingsHtml += '</div>';
+
+                const tracingsDiv = document.createElement('div');
+                tracingsDiv.innerHTML = tracingsHtml;
+                div.appendChild(tracingsDiv);
+
+                list.appendChild(div);
             });
         }
 
         function clearSubmissions() {
-            if (confirm('Confirmez-vous la suppression de toutes les soumissions ?')) {
+            if (confirm('Voulez-vous vraiment supprimer toutes les soumissions ?')) {
                 localStorage.removeItem('ecgSubmissions');
                 renderSubmissions();
             }
         }
 
+        // Initial render
         renderSubmissions();
     </script>
 </body>
