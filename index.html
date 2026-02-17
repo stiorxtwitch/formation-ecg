@@ -145,19 +145,19 @@
         <h2>Simulation de placement des électrodes ECG</h2>
         <p>Glissez-déposez les électrodes aux emplacements corrects en suivant les codes couleurs standards. Les pastilles sont petites pour un placement précis, et l'image est agrandie.</p>
         <ul>
-            <li>RA (rouge) : Face interne de l'avant-bras droit, poignet ou épaule droite.</li>
-            <li>LA (jaune) : Face interne de l'avant-bras gauche, poignet ou épaule gauche.</li>
-            <li>RL (noir) : Au-dessus de la cheville droite ou crête iliaque droite.</li>
-            <li>LL (vert) : Au-dessus de la cheville gauche ou crête iliaque gauche.</li>
-            <li>V1 (rouge) : 4e espace intercostal, bord droit du sternum.</li>
-            <li>V2 (jaune) : 4e espace intercostal, bord gauche du sternum.</li>
-            <li>V3 (vert) : Entre V2 et V4.</li>
-            <li>V4 (brun) : 5e espace intercostal, ligne médio-claviculaire gauche.</li>
-            <li>V5 (noir) : Même niveau que V4, ligne axillaire antérieure gauche.</li>
-            <li>V6 (violet) : Même niveau que V4, ligne axillaire moyenne gauche.</li>
-            <li>V7 (orange) : Même niveau que V4, ligne axillaire postérieure gauche (vue postérieure).</li>
-            <li>V8 (blanc) : Même niveau que V4, sous la pointe de la scapula gauche.</li>
-            <li>V9 (gris) : Même niveau que V4, bord paravertébral gauche.</li>
+            <li>RA (rouge)</li>
+            <li>LA (jaune)</li>
+            <li>RL (noir)</li>
+            <li>LL (vert)</li>
+            <li>V1 (rouge)</li>
+            <li>V2 (jaune)</li>
+            <li>V3 (vert)</li>
+            <li>V4 (brun)</li>
+            <li>V5 (noir)</li>
+            <li>V6 (violet)</li>
+            <li>V7 (orange)</li>
+            <li>V8 (blanc)</li>
+            <li>V9 (gris)</li>
         </ul>
 
         <div id="container">
@@ -248,7 +248,7 @@
             });
             localStorage.setItem('ecgSubmissions', JSON.stringify(submissions));
 
-            alert('Formation enregistrée ! (visible dans admin.html)');
+            alert('Réponse envoyé ! Merci de patientez la réponse du formateur');
             this.reset();
 
             const sidebar = document.getElementById('electrodes');
