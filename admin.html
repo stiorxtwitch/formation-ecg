@@ -8,6 +8,7 @@
             font-family: Arial, sans-serif;
             background: #f8f9fa;
             padding: 20px;
+            line-height: 1.5;
         }
         h1 {
             color: #dc3545;
@@ -15,30 +16,31 @@
         .submission {
             background: white;
             border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .submission h3 {
             margin-top: 0;
             color: #007bff;
         }
-        .info, .theory, .placements {
-            margin: 12px 0;
+        .section {
+            margin: 15px 0;
         }
-        .info p, .theory p {
-            margin: 6px 0;
+        .section strong {
+            display: block;
+            margin-bottom: 6px;
         }
-        .placement-visual {
+        .ecg-visual {
             position: relative;
             border: 1px solid #ccc;
             border-radius: 6px;
             overflow: hidden;
             max-width: 800px;
-            margin-top: 10px;
+            margin: 15px 0;
         }
-        .placement-visual img {
+        .ecg-visual img {
             width: 100%;
             height: auto;
             display: block;
@@ -53,17 +55,16 @@
             line-height: 24px;
             font-size: 10px;
             font-weight: bold;
-            user-select: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         button {
             background: #dc3545;
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 4px;
+            padding: 10px 20px;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
+            font-size: 16px;
         }
         button:hover {
             background: #c82333;
@@ -73,43 +74,28 @@
 <body>
 
     <h1>Administration - Soumissions des recrues</h1>
-    <p>Ces données sont stockées localement (localStorage) pour cet exercice.</p>
+    <p>Données stockées localement (localStorage). Effacez-les si nécessaire.</p>
     <button onclick="clearSubmissions()">Effacer toutes les soumissions</button>
 
     <div id="submissionsList"></div>
 
     <script>
         const colorMap = {
-            ra: 'red',
-            la: 'yellow',
-            rl: 'black',
-            ll: 'green',
-            v1: 'red',
-            v2: 'yellow',
-            v3: 'green',
-            v4: 'brown',
-            v5: 'black',
-            v6: 'purple',
-            v7: 'orange',
-            v8: 'white',
+            ra: 'red', la: 'yellow', rl: 'black', ll: 'green',
+            v1: 'red', v2: 'yellow', v3: 'green', v4: 'brown',
+            v5: 'black', v6: 'purple', v7: 'orange', v8: 'white',
             v9: 'grey'
         };
-
         const textColorMap = {
-            la: 'black',
-            v2: 'black',
-            v8: 'black'
+            la: 'black', v2: 'black', v8: 'black'
         };
 
         function renderSubmissions() {
             const submissions = JSON.parse(localStorage.getItem('ecgSubmissions') || '[]');
             const container = document.getElementById('submissionsList');
-            container.innerHTML = '';
-
-            if (submissions.length === 0) {
-                container.innerHTML = '<p>Aucune soumission pour le moment.</p>';
-                return;
-            }
+            container.innerHTML = submissions.length === 0 
+                ? '<p style="font-style:italic;">Aucune soumission enregistrée pour le moment.</p>'
+                : '';
 
             submissions.forEach((sub, index) => {
                 const div = document.createElement('div');
@@ -117,51 +103,64 @@
 
                 let html = `<h3>Soumission #${index + 1} — ${new Date(sub.timestamp).toLocaleString('fr-BE')}</h3>`;
 
-                html += '<div class="info"><strong>Informations personnelles :</strong>';
-                html += `<p><strong>Nom :</strong> ${sub.data.nom || '(non fourni)'}</p>`;
-                html += `<p><strong>Prénom :</strong> ${sub.data.prenom || '(non fourni)'}</p>`;
-                html += '</div>';
+                html += '<div class="section"><strong>Informations personnelles :</strong>';
+                html += `<p>Nom : ${sub.data.nom || '(non fourni)'}</p>`;
+                html += `<p>Prénom : ${sub.data.prenom || '(non fourni)'}</p></div>`;
 
-                html += '<div class="theory"><strong>Réponses théoriques :</strong>';
-                for (let [key, value] of Object.entries(sub.data)) {
-                    if (key.startsWith('q')) {
-                        html += `<p><strong>${key.toUpperCase()} :</strong> ${value || '(non répondu)'}</p>`;
-                    }
+                html += '<div class="section"><strong>Réponses théoriques :</strong>';
+                for (let i = 1; i <= 5; i++) {
+                    html += `<p>Q${i} : ${sub.data[`q${i}`] || '(non répondu)'}</p>`;
                 }
                 html += '</div>';
 
-                html += '<div class="placements"><strong>Placements des électrodes :</strong></div>';
-
-                const visualContainer = document.createElement('div');
-                visualContainer.className = 'placement-visual';
+                html += '<div class="section"><strong>Placements des électrodes :</strong>';
+                const visual = document.createElement('div');
+                visual.className = 'ecg-visual';
                 const img = document.createElement('img');
                 img.src = 'https://i.imgur.com/n6aXhGW.jpeg';
                 img.alt = 'Mannequin ECG';
-                visualContainer.appendChild(img);
+                visual.appendChild(img);
 
                 img.onload = () => {
-                    const width = img.offsetWidth;
-                    const height = img.offsetHeight;
+                    const w = img.offsetWidth;
+                    const h = img.offsetHeight;
                     for (let [id, pos] of Object.entries(sub.data.placements || {})) {
                         const clone = document.createElement('div');
                         clone.className = 'electrode-clone';
                         clone.textContent = id.toUpperCase();
                         clone.style.backgroundColor = colorMap[id] || 'blue';
                         clone.style.color = textColorMap[id] || 'white';
-                        clone.style.left = (pos.leftPercent / 100 * width) + 'px';
-                        clone.style.top = (pos.topPercent / 100 * height) + 'px';
-                        visualContainer.appendChild(clone);
+                        clone.style.left = (pos.leftPercent / 100 * w) + 'px';
+                        clone.style.top  = (pos.topPercent / 100 * h) + 'px';
+                        visual.appendChild(clone);
                     }
                 };
+                html += '</div>';
+
+                html += '<div class="section"><strong>Reconnaissance des tracés ECG :</strong>';
+                html += `<p><strong>ECG normal – Pourquoi normal ?</strong><br>${sub.data.normal_why || '(non répondu)'}</p>`;
+                html += `<p><strong>ST elevation – Signification :</strong><br>${sub.data.st_elevation_meaning || '(non répondu)'}</p>`;
+                html += `<p><strong>ST elevation – Pourquoi anormal ?</strong><br>${sub.data.st_elevation_why_abnormal || '(non répondu)'}</p>`;
+                html += `<p><strong>ST depression – Signification :</strong><br>${sub.data.st_depression_meaning || '(non répondu)'}</p>`;
+                html += `<p><strong>ST depression – Pourquoi anormal ?</strong><br>${sub.data.st_depression_why_abnormal || '(non répondu)'}</p>`;
+                html += `<p><strong>Inversion T – Causes possibles :</strong><br>${sub.data.t_inversion_meaning || '(non répondu)'}</p>`;
+                html += `<p><strong>Inversion T – Pourquoi anormal ?</strong><br>${sub.data.t_inversion_why_abnormal || '(non répondu)'}</p>`;
+                html += `<p><strong>Ondes T pointues – Signification :</strong><br>${sub.data.peaked_t_meaning || '(non répondu)'}</p>`;
+                html += `<p><strong>Ondes T pointues – Pourquoi anormal ?</strong><br>${sub.data.peaked_t_why_abnormal || '(non répondu)'}</p>`;
+                html += `<p><strong>Ondes T plates / U – Signification :</strong><br>${sub.data.u_wave_meaning || '(non répondu)'}</p>`;
+                html += `<p><strong>Ondes T plates / U – Pourquoi anormal ?</strong><br>${sub.data.u_wave_why_abnormal || '(non répondu)'}</p>`;
+                html += `<p><strong>Fibrillation auriculaire – Signification :</strong><br>${sub.data.afib_meaning || '(non répondu)'}</p>`;
+                html += `<p><strong>Fibrillation auriculaire – Pourquoi anormal ?</strong><br>${sub.data.afib_why_abnormal || '(non répondu)'}</p>`;
+                html += '</div>';
 
                 div.innerHTML = html;
-                div.appendChild(visualContainer);
+                div.appendChild(visual);
                 container.appendChild(div);
             });
         }
 
         function clearSubmissions() {
-            if (confirm('Voulez-vous vraiment effacer toutes les soumissions ?')) {
+            if (confirm('Confirmez-vous la suppression de toutes les soumissions ?')) {
                 localStorage.removeItem('ecgSubmissions');
                 renderSubmissions();
             }
@@ -169,6 +168,5 @@
 
         renderSubmissions();
     </script>
-
 </body>
 </html>
