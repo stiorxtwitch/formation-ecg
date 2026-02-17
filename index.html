@@ -35,7 +35,7 @@
             box-sizing: border-box;
         }
         textarea {
-            min-height: 80px;
+            min-height: 90px;
         }
         #personal-info {
             display: flex;
@@ -97,8 +97,8 @@
             display: block;
         }
         .ecg-tracing {
-            margin: 30px 0;
-            padding: 15px;
+            margin: 35px 0;
+            padding: 20px;
             border: 1px solid #ddd;
             border-radius: 8px;
             background: #fafafa;
@@ -108,17 +108,17 @@
             height: auto;
             border: 1px solid #ccc;
             border-radius: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         button {
             background: #28a745;
             color: white;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border: none;
             border-radius: 6px;
-            margin-top: 30px;
+            margin-top: 35px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 17px;
         }
         button:hover {
             background: #218838;
@@ -184,68 +184,82 @@
             </div>
         </div>
 
-        <h2>Reconnaissance des ondes et tracés ECG</h2>
-        <p>Regardez les tracés suivants et répondez aux questions. Indiquez ce que représente chaque anomalie et pourquoi le tracé n'est pas normal (comparé à un ECG normal).</p>
+        <h2>Reconnaissance des tracés ECG</h2>
+        <p>Observez attentivement chaque tracé ci-dessous. Décrivez ce que vous voyez et donnez votre interprétation. Prenez le temps d’hésiter et de justifier.</p>
 
         <div class="ecg-tracing">
-            <h3>Tracé 1 : ECG normal (rythme sinusal)</h3>
-            <img src="https://cardiovasc.fr/wp-content/uploads/2016/08/sinus-rhythm-ecg-ekg-criteria.jpg" alt="ECG normal">
-            <label>Pourquoi ce tracé est-il normal ?</label>
-            <textarea name="normal_why" required placeholder="Ex. : ondes P positives, PR normal, QRS fin, ST isoélectrique, T positives..."></textarea>
+            <h3>Tracé 1</h3>
+            <img src="https://cardiovasc.fr/wp-content/uploads/2016/08/sinus-rhythm-ecg-ekg-criteria.jpg" alt="Tracé 1">
+            <label>Ce tracé vous paraît-il normal ou anormal ?</label>
+            <input type="text" name="tracing1_normal_or_not" required placeholder="Normal / Anormal">
+            <label>Justifiez votre réponse en décrivant les éléments clés que vous observez (ondes, intervalles, segments...)</label>
+            <textarea name="tracing1_justification" required placeholder="Exemple : rythme régulier, ondes P présentes avant chaque QRS, PR constant..."></textarea>
         </div>
 
         <div class="ecg-tracing">
-            <h3>Tracé 2 : Sus-décalage du segment ST (STEMI antérieur)</h3>
-            <img src="https://www.e-cardiogram.com/wp-content/uploads/2019/11/Stemi-anterieur-V1V5-Pardee-ecg-taboulet-vxqLOX9w-1200x900.jpg" alt="ST elevation infarctus">
-            <label>Que signifie cette anomalie ?</label>
-            <input type="text" name="st_elevation_meaning" required placeholder="Ex. : infarctus du myocarde aigu">
-            <label>Pourquoi ce tracé n'est-il PAS normal ?</label>
-            <textarea name="st_elevation_why_abnormal" required placeholder="Ex. : ST surélevé >1 mm dans plusieurs dérivations..."></textarea>
+            <h3>Tracé 2</h3>
+            <img src="https://i.imgur.com/nEW9AtY.png" alt="Tracé 2">
+            <label>Ce tracé vous paraît-il normal ou anormal ?</label>
+            <input type="text" name="tracing2_normal_or_not" required placeholder="Normal / Anormal">
+            <label>Quelles anomalies principales observez-vous ?</label>
+            <textarea name="tracing2_anomalies" required placeholder="Décrivez précisément ce qui attire votre attention..."></textarea>
+            <label>Quelle pourrait être l’interprétation clinique la plus probable selon vous ?</label>
+            <textarea name="tracing2_interpretation" required placeholder="Votre hypothèse principale + pourquoi..."></textarea>
         </div>
 
         <div class="ecg-tracing">
-            <h3>Tracé 3 : Sous-décalage du segment ST (ischémie sous-endocardique)</h3>
-            <img src="https://litfl.com/wp-content/uploads/2021/03/ECG-SA-flag-OMI-STEMI.png" alt="ST depression ischémie">
-            <label>Que signifie cette anomalie ?</label>
-            <input type="text" name="st_depression_meaning" required placeholder="Ex. : ischémie myocardique, angor">
-            <label>Pourquoi ce tracé n'est-il PAS normal ?</label>
-            <textarea name="st_depression_why_abnormal" required placeholder="Ex. : ST sous-décalé horizontal ou descendant..."></textarea>
+            <h3>Tracé 3</h3>
+            <img src="https://litfl.com/wp-content/uploads/2021/03/ECG-SA-flag-OMI-STEMI.png" alt="Tracé 3">
+            <label>Ce tracé vous paraît-il normal ou anormal ?</label>
+            <input type="text" name="tracing3_normal_or_not" required placeholder="Normal / Anormal">
+            <label>Quelles anomalies principales observez-vous ?</label>
+            <textarea name="tracing3_anomalies" required placeholder="Décrivez précisément ce qui attire votre attention..."></textarea>
+            <label>Quelle pourrait être l’interprétation clinique la plus probable selon vous ?</label>
+            <textarea name="tracing3_interpretation" required placeholder="Votre hypothèse principale + pourquoi..."></textarea>
         </div>
 
         <div class="ecg-tracing">
-            <h3>Tracé 4 : Inversion de l'onde T</h3>
-            <img src="https://www.e-cardiogram.com/wp-content/uploads/2019/11/Onde-T-inversee-negative-6-exemples-ECG-Taboulet-1200x900.jpg" alt="T inversion">
-            <label>Que peut signifier cette anomalie ? (donnez au moins 2 causes possibles)</label>
-            <textarea name="t_inversion_meaning" required placeholder="Ex. : ischémie, hypertrophie ventriculaire, hypokaliémie..."></textarea>
-            <label>Pourquoi ce tracé n'est-il PAS normal ?</label>
-            <textarea name="t_inversion_why_abnormal" required placeholder="Ex. : onde T inversée là où elle devrait être positive..."></textarea>
+            <h3>Tracé 4</h3>
+            <img src="https://i.imgur.com/UkLEeOx.png" alt="Tracé 4">
+            <label>Ce tracé vous paraît-il normal ou anormal ?</label>
+            <input type="text" name="tracing4_normal_or_not" required placeholder="Normal / Anormal">
+            <label>Quelles anomalies principales observez-vous ?</label>
+            <textarea name="tracing4_anomalies" required placeholder="Décrivez précisément ce qui attire votre attention..."></textarea>
+            <label>Quelle pourrait être l’interprétation clinique la plus probable selon vous ? (donnez au moins 2 hypothèses possibles si vous hésitez)</label>
+            <textarea name="tracing4_interpretation" required placeholder="Vos hypothèses + arguments..."></textarea>
         </div>
 
         <div class="ecg-tracing">
-            <h3>Tracé 5 : Ondes T pointues / amples (hyperkaliémie)</h3>
-            <img src="https://www.e-cardiogram.com/wp-content/uploads/2019/11/Ondes-T-amples-Hyperkalie%CC%81mie-Tm2a31.jpg" alt="Peaked T hyperkaliémie">
-            <label>Que signifie cette anomalie ?</label>
-            <input type="text" name="peaked_t_meaning" required placeholder="Ex. : hyperkaliémie sévère">
-            <label>Pourquoi ce tracé n'est-il PAS normal ?</label>
-            <textarea name="peaked_t_why_abnormal" required placeholder="Ex. : ondes T très hautes, pointues, symétriques..."></textarea>
+            <h3>Tracé 5</h3>
+            <img src="https://i.imgur.com/vQ8LYSb.png" alt="Tracé 5">
+            <label>Ce tracé vous paraît-il normal ou anormal ?</label>
+            <input type="text" name="tracing5_normal_or_not" required placeholder="Normal / Anormal">
+            <label>Quelles anomalies principales observez-vous ?</label>
+            <textarea name="tracing5_anomalies" required placeholder="Décrivez précisément ce qui attire votre attention..."></textarea>
+            <label>Quelle pourrait être l’interprétation clinique la plus probable selon vous ?</label>
+            <textarea name="tracing5_interpretation" required placeholder="Votre hypothèse principale + pourquoi..."></textarea>
         </div>
 
         <div class="ecg-tracing">
-            <h3>Tracé 6 : Ondes T plates + ondes U (hypokaliémie)</h3>
-            <img src="https://www.e-cardiogram.com/wp-content/uploads/2023/04/Hypokaliemie-2-moderee-2.1-onde-U-tres-visible-ECG-taboulet-sls-Tm1a8ter.jpg" alt="Hypokaliémie U waves">
-            <label>Que signifie cette anomalie ?</label>
-            <input type="text" name="u_wave_meaning" required placeholder="Ex. : hypokaliémie">
-            <label>Pourquoi ce tracé n'est-il PAS normal ?</label>
-            <textarea name="u_wave_why_abnormal" required placeholder="Ex. : onde T aplatie, onde U proéminente, QT long apparent..."></textarea>
+            <h3>Tracé 6</h3>
+            <img src="https://i.imgur.com/gq9xsfq.png" alt="Tracé 6">
+            <label>Ce tracé vous paraît-il normal ou anormal ?</label>
+            <input type="text" name="tracing6_normal_or_not" required placeholder="Normal / Anormal">
+            <label>Quelles anomalies principales observez-vous ?</label>
+            <textarea name="tracing6_anomalies" required placeholder="Décrivez précisément ce qui attire votre attention..."></textarea>
+            <label>Quelle pourrait être l’interprétation clinique la plus probable selon vous ?</label>
+            <textarea name="tracing6_interpretation" required placeholder="Votre hypothèse principale + pourquoi..."></textarea>
         </div>
 
         <div class="ecg-tracing">
-            <h3>Tracé 7 : Fibrillation auriculaire</h3>
-            <img src="https://www.e-cardiogram.com/wp-content/uploads/2019/11/Fibrillation-atriale-rapide-ECG-Taboulet-1.jpg" alt="Fibrillation auriculaire">
-            <label>Que signifie cette anomalie ?</label>
-            <textarea name="afib_meaning" required placeholder="Ex. : rythme irrégulier sans onde P, activité auriculaire chaotique..."></textarea>
-            <label>Pourquoi ce tracé n'est-il PAS normal ?</label>
-            <textarea name="afib_why_abnormal" required placeholder="Ex. : absence d'onde P, QRS irrégulièrement irréguliers..."></textarea>
+            <h3>Tracé 7</h3>
+            <img src="https://i.imgur.com/v1c2xwK.png" alt="Tracé 7">
+            <label>Ce tracé vous paraît-il normal ou anormal ?</label>
+            <input type="text" name="tracing7_normal_or_not" required placeholder="Normal / Anormal">
+            <label>Quelles anomalies principales observez-vous ?</label>
+            <textarea name="tracing7_anomalies" required placeholder="Décrivez précisément ce qui attire votre attention..."></textarea>
+            <label>Quelle pourrait être l’interprétation clinique la plus probable selon vous ?</label>
+            <textarea name="tracing7_interpretation" required placeholder="Votre hypothèse principale + pourquoi..."></textarea>
         </div>
 
         <button type="submit">Envoyer la formation</button>
@@ -255,44 +269,35 @@
         function allowDrop(ev) {
             ev.preventDefault();
         }
-
         function drag(ev) {
             ev.dataTransfer.setData("text", ev.target.id);
         }
-
         function drop(ev) {
             ev.preventDefault();
             const data = ev.dataTransfer.getData("text");
             const electrode = document.getElementById(data);
             if (!electrode) return;
-
             const container = document.getElementById('mannequin-container');
             const rect = container.getBoundingClientRect();
             const x = ev.clientX - rect.left - (electrode.offsetWidth / 2);
             const y = ev.clientY - rect.top - (electrode.offsetHeight / 2);
-
             electrode.style.position = 'absolute';
             electrode.style.left = Math.max(0, x) + 'px';
-            electrode.style.top  = Math.max(0, y) + 'px';
+            electrode.style.top = Math.max(0, y) + 'px';
             electrode.style.margin = '0';
-
             container.appendChild(electrode);
         }
-
         const electrodes = document.getElementsByClassName('electrode');
         for (let el of electrodes) {
             el.addEventListener('dragstart', drag);
         }
-
         document.getElementById('ecgForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const formData = {};
             const inputs = this.querySelectorAll('input[type="text"], textarea');
             inputs.forEach(input => {
                 formData[input.name] = input.value.trim();
             });
-
             formData.placements = {};
             const containerWidth = document.getElementById('mannequin-container').offsetWidth;
             const containerHeight = document.getElementById('mannequin-container').offsetHeight;
@@ -306,17 +311,14 @@
                     };
                 }
             }
-
             const submissions = JSON.parse(localStorage.getItem('ecgSubmissions') || '[]');
             submissions.push({
                 timestamp: new Date().toISOString(),
                 data: formData
             });
             localStorage.setItem('ecgSubmissions', JSON.stringify(submissions));
-
             alert('Formation enregistrée ! Consultez admin.html pour voir les résultats.');
             this.reset();
-
             const sidebar = document.getElementById('electrodes');
             for (let el of electrodes) {
                 el.style.position = '';
