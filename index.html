@@ -8,6 +8,7 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             padding: 20px;
+            margin: 0;
         }
         h1, h2 {
             color: #333;
@@ -17,10 +18,13 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 1100px;
+            margin: 0 auto;
         }
         label {
             display: block;
-            margin-top: 10px;
+            margin-top: 12px;
+            font-weight: bold;
         }
         input[type="text"] {
             width: 100%;
@@ -28,93 +32,86 @@
             margin-top: 5px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            box-sizing: border-box;
         }
         #container {
             display: flex;
-            margin-top: 20px;
+            margin-top: 25px;
+            gap: 25px;
         }
         #electrodes {
-            width: 150px;
-            margin-right: 20px;
-            background: #eee;
-            padding: 10px;
-            border-radius: 4px;
+            width: 140px;
+            background: #f0f0f0;
+            padding: 12px;
+            border-radius: 6px;
+            flex-shrink: 0;
         }
         .electrode {
-            background: #4CAF50;
+            background: #2c7be5;
             color: white;
-            padding: 10px;
-            margin: 10px 0;
+            margin: 8px 0;
             text-align: center;
             cursor: grab;
-            border-radius: 50%; /* Pour des pastilles rondes */
-            width: 40px;
-            height: 40px;
-            line-height: 20px;
-            font-size: 12px;
+            border-radius: 50%;
+            width: 32px;          /* ← plus petit pour plus de précision */
+            height: 32px;
+            line-height: 32px;
+            font-size: 11px;
+            font-weight: bold;
             user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         #mannequin-container {
             position: relative;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 6px;
             overflow: hidden;
+            flex: 1;
         }
         #mannequin {
-            width: 800px;
+            width: 100%;
             height: auto;
             display: block;
         }
         button {
-            background: #007BFF;
+            background: #28a745;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 4px;
-            margin-top: 20px;
+            border-radius: 6px;
+            margin-top: 25px;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
-            background: #0056b3;
+            background: #218838;
         }
     </style>
 </head>
 <body>
+
     <h1>Formation à l'ECG (Électrocardiogramme) - La Défense Belge</h1>
+
     <form id="ecgForm">
         <h2>Questions théoriques sur les ondes ECG</h2>
-        <label>1. Que représente l'onde P ? (Ex: Dépolarisation auriculaire)</label>
-        <input type="text" name="q1">
+        
+        <label>1. Que représente l'onde P ?</label>
+        <input type="text" name="q1" required>
 
         <label>2. Que représente le complexe QRS ?</label>
-        <input type="text" name="q2">
+        <input type="text" name="q2" required>
 
         <label>3. Que représente l'onde T ?</label>
-        <input type="text" name="q3">
+        <input type="text" name="q3" required>
 
         <label>4. Quelle est la signification de l'intervalle PR ?</label>
-        <input type="text" name="q4">
+        <input type="text" name="q4" required>
 
         <label>5. Qu'est-ce que le segment ST et pourquoi est-il important ?</label>
-        <input type="text" name="q5">
+        <input type="text" name="q5" required>
 
         <h2>Simulation de placement des électrodes ECG</h2>
-        <p>Glissez et déposez les patchs périphériques (RA, LA, RL, LL) et précordiaux (V1 à V6) aux positions correctes sur la vue antérieure du mannequin, et les patchs postérieurs (V7 à V9) sur la vue postérieure. Prenez en compte les positions standard :</p>
-        <ul>
-            <li>RA : Épaule ou poignet droit</li>
-            <li>LA : Épaule ou poignet gauche</li>
-            <li>RL : Cheville droite</li>
-            <li>LL : Cheville gauche</li>
-            <li>V1 : 4e espace intercostal, bord droit du sternum</li>
-            <li>V2 : 4e espace intercostal, bord gauche du sternum</li>
-            <li>V3 : Mi-chemin entre V2 et V4</li>
-            <li>V4 : 5e espace intercostal, ligne médio-claviculaire gauche</li>
-            <li>V5 : Même niveau que V4, ligne axillaire antérieure gauche</li>
-            <li>V6 : Même niveau que V4, ligne axillaire moyenne gauche</li>
-            <li>V7 : Même niveau que V4, ligne axillaire postérieure gauche (vue postérieure)</li>
-            <li>V8 : Même niveau que V4, sous la pointe de la scapula gauche</li>
-            <li>V9 : Même niveau que V4, bord paravertébral gauche</li>
-        </ul>
+        <p>Glissez-déposez les électrodes aux emplacements corrects. Les pastilles sont plus petites pour un placement précis.</p>
 
         <div id="container">
             <div id="electrodes">
@@ -132,12 +129,13 @@
                 <div class="electrode" id="v8" draggable="true">V8</div>
                 <div class="electrode" id="v9" draggable="true">V9</div>
             </div>
+
             <div id="mannequin-container" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="https://i.imgur.com/n6aXhGW.jpeg" id="mannequin" alt="Mannequin vues antérieure et postérieure">
+                <img src="https://i.imgur.com/n6aXhGW.jpeg" id="mannequin" alt="Mannequin ECG antérieur / postérieur">
             </div>
         </div>
 
-        <button type="submit">Soumettre le formulaire</button>
+        <button type="submit">Envoyer la formation</button>
     </form>
 
     <script>
@@ -151,25 +149,68 @@
 
         function drop(ev) {
             ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            var electrode = document.getElementById(data);
-            
-            // Calculer la position relative au container
-            var rect = document.getElementById('mannequin-container').getBoundingClientRect();
-            var x = ev.clientX - rect.left - (electrode.offsetWidth / 2);
-            var y = ev.clientY - rect.top - (electrode.offsetHeight / 2);
-            
+            const data = ev.dataTransfer.getData("text");
+            const electrode = document.getElementById(data);
+            if (!electrode) return;
+
+            const container = document.getElementById('mannequin-container');
+            const rect = container.getBoundingClientRect();
+            const x = ev.clientX - rect.left - (electrode.offsetWidth / 2);
+            const y = ev.clientY - rect.top - (electrode.offsetHeight / 2);
+
             electrode.style.position = 'absolute';
-            electrode.style.left = x + 'px';
-            electrode.style.top = y + 'px';
-            
-            document.getElementById('mannequin-container').appendChild(electrode);
+            electrode.style.left = Math.max(0, x) + 'px';
+            electrode.style.top  = Math.max(0, y) + 'px';
+            electrode.style.margin = '0';
+
+            container.appendChild(electrode);
         }
 
-        var electrodes = document.getElementsByClassName('electrode');
-        for (var i = 0; i < electrodes.length; i++) {
-            electrodes[i].ondragstart = drag;
+        const electrodes = document.getElementsByClassName('electrode');
+        for (let el of electrodes) {
+            el.addEventListener('dragstart', drag);
         }
+
+        // Sauvegarde localStorage + reset positions
+        document.getElementById('ecgForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {};
+            const inputs = this.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                formData[input.name] = input.value.trim();
+            });
+
+            // Récupérer positions des électrodes
+            formData.placements = {};
+            for (let el of electrodes) {
+                if (el.style.position === 'absolute') {
+                    const left = parseFloat(el.style.left) || 0;
+                    const top  = parseFloat(el.style.top)  || 0;
+                    formData.placements[el.id] = { left, top };
+                }
+            }
+
+            // Sauvegarder
+            const submissions = JSON.parse(localStorage.getItem('ecgSubmissions') || '[]');
+            submissions.push({
+                timestamp: new Date().toISOString(),
+                data: formData
+            });
+            localStorage.setItem('ecgSubmissions', JSON.stringify(submissions));
+
+            alert('Formation enregistrée ! (visible dans admin.html)');
+            this.reset();
+
+            // Remettre les électrodes dans la liste de gauche
+            const sidebar = document.getElementById('electrodes');
+            for (let el of electrodes) {
+                el.style.position = '';
+                el.style.left = '';
+                el.style.top = '';
+                sidebar.appendChild(el);
+            }
+        });
     </script>
 </body>
 </html>
