@@ -54,13 +54,12 @@
             flex-shrink: 0;
         }
         .electrode {
-            background: #2c7be5;
             color: white;
             margin: 8px 0;
             text-align: center;
             cursor: grab;
             border-radius: 50%;
-            width: 24px;          /* ← encore plus petit pour plus de précision */
+            width: 24px;
             height: 24px;
             line-height: 24px;
             font-size: 10px;
@@ -68,19 +67,31 @@
             user-select: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
+        #ra { background: red; }
+        #la { background: yellow; color: black; }
+        #rl { background: black; }
+        #ll { background: green; }
+        #v1 { background: red; }
+        #v2 { background: yellow; color: black; }
+        #v3 { background: green; }
+        #v4 { background: brown; }
+        #v5 { background: black; }
+        #v6 { background: purple; }
+        #v7 { background: orange; }
+        #v8 { background: white; color: black; }
+        #v9 { background: grey; }
         #mannequin-container {
             position: relative;
             border: 1px solid #ccc;
             border-radius: 6px;
             overflow: hidden;
             flex: 1;
-            max-width: 1000px;    /* ← Augmente la largeur max pour plus de précision */
+            max-width: 1000px;
         }
         #mannequin {
             width: 100%;
             height: auto;
             display: block;
-            image-rendering: pixelated; /* ← Pour une meilleure netteté si besoin, mais optionnel */
         }
         button {
             background: #28a745;
@@ -132,7 +143,22 @@
         <input type="text" name="q5" required>
 
         <h2>Simulation de placement des électrodes ECG</h2>
-        <p>Glissez-déposez les électrodes aux emplacements corrects. Les pastilles sont plus petites pour un placement précis, et l'image est agrandie pour plus de précision.</p>
+        <p>Glissez-déposez les électrodes aux emplacements corrects en suivant les codes couleurs standards. Les pastilles sont petites pour un placement précis, et l'image est agrandie.</p>
+        <ul>
+            <li>RA (rouge) : Face interne de l'avant-bras droit, poignet ou épaule droite.</li>
+            <li>LA (jaune) : Face interne de l'avant-bras gauche, poignet ou épaule gauche.</li>
+            <li>RL (noir) : Au-dessus de la cheville droite ou crête iliaque droite.</li>
+            <li>LL (vert) : Au-dessus de la cheville gauche ou crête iliaque gauche.</li>
+            <li>V1 (rouge) : 4e espace intercostal, bord droit du sternum.</li>
+            <li>V2 (jaune) : 4e espace intercostal, bord gauche du sternum.</li>
+            <li>V3 (vert) : Entre V2 et V4.</li>
+            <li>V4 (brun) : 5e espace intercostal, ligne médio-claviculaire gauche.</li>
+            <li>V5 (noir) : Même niveau que V4, ligne axillaire antérieure gauche.</li>
+            <li>V6 (violet) : Même niveau que V4, ligne axillaire moyenne gauche.</li>
+            <li>V7 (orange) : Même niveau que V4, ligne axillaire postérieure gauche (vue postérieure).</li>
+            <li>V8 (blanc) : Même niveau que V4, sous la pointe de la scapula gauche.</li>
+            <li>V9 (gris) : Même niveau que V4, bord paravertébral gauche.</li>
+        </ul>
 
         <div id="container">
             <div id="electrodes">
@@ -192,7 +218,6 @@
             el.addEventListener('dragstart', drag);
         }
 
-        // Sauvegarde localStorage + reset positions
         document.getElementById('ecgForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -202,7 +227,6 @@
                 formData[input.name] = input.value.trim();
             });
 
-            // Récupérer positions des électrodes (relatives à la taille actuelle)
             formData.placements = {};
             const containerWidth = document.getElementById('mannequin-container').offsetWidth;
             const containerHeight = document.getElementById('mannequin-container').offsetHeight;
@@ -217,7 +241,6 @@
                 }
             }
 
-            // Sauvegarder
             const submissions = JSON.parse(localStorage.getItem('ecgSubmissions') || '[]');
             submissions.push({
                 timestamp: new Date().toISOString(),
@@ -228,7 +251,6 @@
             alert('Formation enregistrée ! (visible dans admin.html)');
             this.reset();
 
-            // Remettre les électrodes dans la liste de gauche
             const sidebar = document.getElementById('electrodes');
             for (let el of electrodes) {
                 el.style.position = '';
